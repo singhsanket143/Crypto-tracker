@@ -1,5 +1,32 @@
 import axiosInstance from "../Config/axiosInstance";
 
+export const fetchCryptoById = async (id, appCurrency, flag = false) => {
+    try {
+        if(!flag) return;
+        const response = await axiosInstance.get(`coins/${id}`);
+        return {
+            success: true,
+            data: [
+                {
+                    id: response.data.id,
+                    name: response.data.name,
+                    symbol: response.data.symbol,
+                    image: response.data.image.small,
+                    change24h: 0,
+                    price: response.data.market_data.current_price[appCurrency.toLowerCase()],
+                    market_cap: response.data.market_data.market_cap[appCurrency.toLowerCase()]
+                }
+            ]
+        };
+    } catch(error) {
+        console.log(error);
+        return {
+            success: false,
+            data: []
+        };
+    }   
+};
+
 export const fetchCryptoList = async (appCurrency, page, flag = false) => {
     try {
         if(!flag) return;

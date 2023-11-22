@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { fetchCryptoList } from "../Repository/CryptoRepository";
+import { fetchCryptoById, fetchCryptoList } from "../Repository/CryptoRepository";
 
-function CryptoTable() {
+// eslint-disable-next-line react/prop-types
+function CryptoTable({id}) {
     
     const {appCurrency} = useSelector((state) => state.currency);
 
@@ -21,16 +22,24 @@ function CryptoTable() {
 
     const [page, setPage] = useState(1);
 
-    async function loadCryptos(appCurrency, page) {
-        const result = await fetchCryptoList(appCurrency, page, false);
-        if(result.success) {
-            setCoins(result.data);
+    async function loadCryptos(appCurrency, page, id) {
+        if(id) {
+            const result = await fetchCryptoById(id, appCurrency, true);
+            if(result.success) {
+                setCoins(result.data);
+            }
+        } else {
+            const result = await fetchCryptoList(appCurrency, page, true);
+            if(result.success) {
+                setCoins(result.data);
+            }
         }
+       
     }
 
     useEffect(() => {
-        loadCryptos(appCurrency, page);
-    }, [appCurrency, page]);
+        loadCryptos(appCurrency, page, id);
+    }, [appCurrency, page, id]);
 
     return (
         <div className="my-5 flex flex-col items-center justify-center gap-5 w-[80vw] mx-auto">
